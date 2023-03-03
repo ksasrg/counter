@@ -30,14 +30,12 @@ export const Settings: FC<PropsType> = ({
         const value = parseInt(e.currentTarget.value)
         if (isNaN(value)) return
         setMaxInputValue(value)
-        setCounterError('press set')
     }
 
     const startInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value)
         if (isNaN(value)) return
         setStartInputValue(value)
-        setCounterError('press set')
     }
 
     const setHandler = () => {
@@ -58,6 +56,8 @@ export const Settings: FC<PropsType> = ({
     useEffect(() => {
         setMaxInputError(false)
         setStartInputError(false)
+        maxInputValue === maxCounter && startInputValue === startCounter
+            || setCounterError('press set')
 
         if (startInputValue === maxInputValue) {
             setStartInputError(true)
@@ -78,6 +78,8 @@ export const Settings: FC<PropsType> = ({
     useEffect(() => {
         setMaxInputError(false)
         setStartInputError(false)
+        maxInputValue === maxCounter && startInputValue === startCounter
+            || setCounterError('press set')
 
         if (maxInputValue === startInputValue) {
             setMaxInputError(true)
@@ -151,7 +153,7 @@ export const Settings: FC<PropsType> = ({
                 <Button
                     onClick={clearHandler}
                     className={s.button}
-                    // disabled={disableSetButton}
+                // disabled={disableSetButton}
                 >Clear</Button>
 
             </div>
