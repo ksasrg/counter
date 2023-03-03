@@ -7,16 +7,19 @@ type ButtonPropsType = {
     className?: string
 }
 
-export const Button: FC<ButtonPropsType> = ({ children, onClick, disabled, className }) => {
+export const Button: FC<ButtonPropsType> = ({
+    children,
+    onClick,
+    disabled,
+    className
+}) => {
+
     return (
         <button
             disabled={disabled}
-            // disabled={true}
             onClick={onClick}
             className={className}
-        >
-            {children}
-        </button>
+        >{children}</button>
     );
 };
 

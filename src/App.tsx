@@ -18,8 +18,8 @@ function App() {
   function getInitFromLS(key: string, defaultValue: number) {
     const value = localStorage.getItem(key)
     if (value) {
-      // const newvalue = parseInt(value)
-      const newvalue = JSON.parse(value)
+      const newvalue = parseInt(value)
+      // const newvalue = JSON.parse(value)
       if (newvalue) return newvalue
     }
     return defaultValue

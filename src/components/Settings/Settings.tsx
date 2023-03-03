@@ -110,8 +110,8 @@ export const Settings: FC<PropsType> = ({
     return (
         <>
             <div className={s.display}>
-
                 <div className={s.inputblock}>
+
                     <span>max value: </span>
                     <Input
                         inputType='number'
@@ -119,9 +119,10 @@ export const Settings: FC<PropsType> = ({
                         onChange={maxInputChangeHandler}
                         className={s.input + ' ' + (maxInputError && s.inputError)}
                     />
-                </div>
 
+                </div>
                 <div className={s.inputblock}>
+
                     <span>start value: </span>
                     <Input
                         inputType='number'
@@ -129,10 +130,9 @@ export const Settings: FC<PropsType> = ({
                         onChange={startInputChangeHandler}
                         className={s.input + ' ' + (startInputError ? s.inputError : '')}
                     />
+
                 </div>
-
             </div>
-
             <div className={s.buttons}>
 
                 <Button
@@ -142,8 +142,6 @@ export const Settings: FC<PropsType> = ({
                 >SET</Button>
 
             </div>
-
-
         </>
     );
 };

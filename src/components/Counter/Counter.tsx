@@ -25,7 +25,7 @@ export const Counter: FC<PropsType> = ({
     const displayClass = `
     ${s.display} 
     ${counterError || s.counterDisplay} 
-    ${(counter >= maxCounter ? ' ' + s.red : '')}
+    ${(counter >= maxCounter && !counterError ? ' ' + s.red : '')}
     `
 
     return (

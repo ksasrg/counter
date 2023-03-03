@@ -15,16 +15,12 @@ export const Input: FC<PropsType> = ({
     onChange,
     className
 }) => {
-
-    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        onChange(e)
-    }
-
+    
     return (
         <input
             type={inputType}
             value={value}
-            onChange={onChangeHandler}
+            onChange={onChange}
             className={className}
         />
     );
