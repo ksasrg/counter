@@ -53,7 +53,6 @@ function App() {
             setMaxCounter={setMaxCounter}
             setCounter={setCounter}
             setCounterError={setCounterError}
-            counterError={counterError}
           />
 
         </div>

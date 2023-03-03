@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import s from './../../App.module.css'
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
@@ -10,7 +10,6 @@ type PropsType = {
     setMaxCounter: (value: number) => void
     setCounter: (value: number) => void
     setCounterError: (error: string) => void
-    counterError: string
 }
 
 export const Settings: FC<PropsType> = ({
@@ -20,7 +19,6 @@ export const Settings: FC<PropsType> = ({
     setMaxCounter,
     setCounter,
     setCounterError,
-    counterError,
 }) => {
 
     const [maxInputValue, setMaxInputValue] = useState<number>(maxCounter)
@@ -32,50 +30,14 @@ export const Settings: FC<PropsType> = ({
         const value = parseInt(e.currentTarget.value)
         if (isNaN(value)) return
         setMaxInputValue(value)
-
         setCounterError('press set')
-        setMaxInputError(false)
-        setStartInputError(false)
-
-        if (value === startInputValue) {
-            setMaxInputError(true)
-            setStartInputError(false)
-            setCounterError('values are equal')
-        }
-
-        if (value < startInputValue) {
-            setMaxInputError(true)
-            setStartInputError(false)
-            setCounterError('max value lower than start')
-        }
-
-        checkNegative(startInputValue, value)
     }
 
     const startInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value)
         if (isNaN(value)) return
         setStartInputValue(value)
-
-
         setCounterError('press set')
-        setMaxInputError(false)
-        setStartInputError(false)
-
-        if (value === maxInputValue) {
-            setStartInputError(true)
-            setMaxInputError(false)
-            setCounterError('values are equal')
-        }
-
-        if (value > maxInputValue) {
-            setStartInputError(true)
-            setMaxInputError(false)
-            setCounterError('start value more than max')
-        }
-
-        checkNegative(value, maxInputValue)
-
     }
 
     const setHandler = () => {
@@ -87,6 +49,51 @@ export const Settings: FC<PropsType> = ({
         setCounterError('')
     }
 
+    const clearHandler = () => {
+        setStartInputValue(startCounter)
+        setMaxInputValue(maxCounter)
+        setCounterError('')
+    }
+
+    useEffect(() => {
+        setMaxInputError(false)
+        setStartInputError(false)
+
+        if (startInputValue === maxInputValue) {
+            setStartInputError(true)
+            setMaxInputError(false)
+            setCounterError('values are equal')
+        }
+
+        if (startInputValue > maxInputValue) {
+            setStartInputError(true)
+            setMaxInputError(false)
+            setCounterError('start value more than max')
+        }
+
+        checkNegative(startInputValue, maxInputValue)
+
+    }, [startInputValue])
+
+    useEffect(() => {
+        setMaxInputError(false)
+        setStartInputError(false)
+
+        if (maxInputValue === startInputValue) {
+            setMaxInputError(true)
+            setStartInputError(false)
+            setCounterError('values are equal')
+        }
+
+        if (maxInputValue < startInputValue) {
+            setMaxInputError(true)
+            setStartInputError(false)
+            setCounterError('max value lower than start')
+        }
+
+        checkNegative(startInputValue, maxInputValue)
+
+    }, [maxInputValue])
 
 
     function checkNegative(start: number, max: number) {
@@ -140,6 +147,12 @@ export const Settings: FC<PropsType> = ({
                     className={s.button}
                     disabled={disableSetButton}
                 >SET</Button>
+
+                <Button
+                    onClick={clearHandler}
+                    className={s.button}
+                    // disabled={disableSetButton}
+                >Clear</Button>
 
             </div>
         </>
