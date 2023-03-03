@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Display } from './components/Display/Display';
-import { Button } from './components/Button/Button';
 import s from './App.module.css'
+import { Counter } from './components/Counter/Counter';
+import { Settings } from './components/Settings/Settings';
+
+const START_COUNTER_STORAGE = 'counter_start'
+const MAX_COUNTER_STORAGE = 'counter_max'
+const COUNTER_STORAGE = 'counter'
 
 function App() {
 
-  const minCounter = 0
-  const maxCounter = 5
+  const [startCounter, setStartCounter] = useState<number>(() => getInitFromLS(START_COUNTER_STORAGE, 0))
+  const [maxCounter, setMaxCounter] = useState<number>(() => getInitFromLS(MAX_COUNTER_STORAGE, 5))
+  const [counter, setCounter] = useState<number>(() => getInitFromLS(COUNTER_STORAGE, startCounter))
+  const [counterError, setCounterError] = useState<string>('')
 
-  const [counter, setCounter] = useState<number>(minCounter)
+  function getInitFromLS(key: string, defaultValue: number) {
+    const value = localStorage.getItem(key)
+    if (value) {
+      // const newvalue = parseInt(value)
+      const newvalue = JSON.parse(value)
+      if (newvalue) return newvalue
+    }
+    return defaultValue
+  }
+
+  useEffect(() => {
+    localStorage.setItem(START_COUNTER_STORAGE, JSON.stringify(startCounter))
+    localStorage.setItem(MAX_COUNTER_STORAGE, JSON.stringify(maxCounter))
+    localStorage.setItem(COUNTER_STORAGE, JSON.stringify(counter))
+  }, [startCounter, maxCounter, counter])
 
   const incHandler = () => {
     if (counter < maxCounter) {
@@ -19,47 +38,44 @@ function App() {
   }
 
   const resetHandler = () => {
-    setCounter(minCounter)
+    setCounter(startCounter)
   }
 
-
-
   return (
-    <div className={s.counter}>
+    <>
+      <div className={s.page}>
+        <div className={s.counter}>
 
-      <Display className={s.display + (counter >= maxCounter ? ' ' + s.red : '')}>
-        {counter}
-      </Display>
+          <Settings
+            startCounter={startCounter}
+            maxCounter={maxCounter}
+            setStartCounter={setStartCounter}
+            setMaxCounter={setMaxCounter}
+            setCounter={setCounter}
+            setCounterError={setCounterError}
+            counterError={counterError}
+          />
 
-      <div className={s.buttons}>
+        </div>
+        <div className={s.counter}>
 
-        <Button
-          onClick={incHandler}
-          disabled={counter >= maxCounter}
-          className={s.button}
-        >
-          INC
-        </Button>
+          <Counter
+            counter={counter}
+            counterError={counterError}
+            minCounter={startCounter}
+            maxCounter={maxCounter}
+            incHandler={incHandler}
+            resetHandler={resetHandler}
+          />
 
-        {/* <button
-          onClick={incHandler}
-          disabled={counter >= maxCounter}
-          className={s.button}
-        >
-          INC
-        </button> */}
-
-        <Button
-          onClick={resetHandler}
-          disabled={counter <= minCounter}
-          className={s.button}
-        >
-          RESET
-        </Button>
-
+        </div>
       </div>
-    </div>
+
+
+    </>
   );
 }
 
 export default App;
+
+

@@ -11,6 +11,7 @@ export const Button: FC<ButtonPropsType> = ({ children, onClick, disabled, class
     return (
         <button
             disabled={disabled}
+            // disabled={true}
             onClick={onClick}
             className={className}
         >
