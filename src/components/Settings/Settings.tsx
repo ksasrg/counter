@@ -1,25 +1,16 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import s from './../../App.module.css'
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
+import { useDispatch, useSelector } from 'react-redux';
+import { CounterType, resetCounterAC, setCounterErrorAC, setMaxCounterAC, setStartCounterAC } from '../../state/counterReducer';
+import { StoreType } from '../../state/store';
 
-type PropsType = {
-    startCounter: number
-    maxCounter: number
-    setStartCounter: (value: number) => void
-    setMaxCounter: (value: number) => void
-    setCounter: (value: number) => void
-    setCounterError: (error: string) => void
-}
-
-export const Settings: FC<PropsType> = ({
-    startCounter,
-    maxCounter,
-    setStartCounter,
-    setMaxCounter,
-    setCounter,
-    setCounterError,
-}) => {
+export const Settings = () => {
+    const dispatch = useDispatch()
+    const display = useSelector<StoreType, CounterType>(state => state.display)
+    const maxCounter = display.maxCounter
+    const startCounter = display.startCounter
 
     const [maxInputValue, setMaxInputValue] = useState<number>(maxCounter)
     const [startInputValue, setStartInputValue] = useState<number>(startCounter)
@@ -41,80 +32,57 @@ export const Settings: FC<PropsType> = ({
     const setHandler = () => {
         if (startInputError || maxInputError) return
 
-        setStartCounter(startInputValue)
-        setMaxCounter(maxInputValue)
-        setCounter(startInputValue)
-        setCounterError('')
+        dispatch(setStartCounterAC(startInputValue))
+        dispatch(setMaxCounterAC(maxInputValue))
+        dispatch(resetCounterAC())
+        dispatch(setCounterErrorAC(''))
     }
 
     const clearHandler = () => {
         setStartInputValue(startCounter)
         setMaxInputValue(maxCounter)
-        setCounterError('')
+        dispatch(setCounterErrorAC(''))
     }
 
     useEffect(() => {
-        setMaxInputError(false)
-        setStartInputError(false)
-        maxInputValue === maxCounter && startInputValue === startCounter
-            || setCounterError('press set')
-
-        if (startInputValue === maxInputValue) {
+        if (startInputValue < 0) {
             setStartInputError(true)
-            setMaxInputError(false)
-            setCounterError('values are equal')
-        }
-
-        if (startInputValue > maxInputValue) {
+            dispatch(setCounterErrorAC('start value must be positive'))
+        } else if (startInputValue > maxInputValue) {
             setStartInputError(true)
-            setMaxInputError(false)
-            setCounterError('start value more than max')
-        }
-
-        checkNegative(startInputValue, maxInputValue)
-
-    }, [startInputValue])
-
-    useEffect(() => {
-        setMaxInputError(false)
-        setStartInputError(false)
-        maxInputValue === maxCounter && startInputValue === startCounter
-            || setCounterError('press set')
-
-        if (maxInputValue === startInputValue) {
-            setMaxInputError(true)
+            dispatch(setCounterErrorAC('start value more than max'))
+        } else if (startInputValue === maxInputValue) {
+            setStartInputError(true)
+            dispatch(setCounterErrorAC('values are equal'))
+        } else if (maxInputValue !== maxCounter || startInputValue !== startCounter) {
+            dispatch(setCounterErrorAC('press set'))
             setStartInputError(false)
-            setCounterError('values are equal')
-        }
-
-        if (maxInputValue < startInputValue) {
-            setMaxInputError(true)
+        } else {
+            dispatch(setCounterErrorAC(''))
             setStartInputError(false)
-            setCounterError('max value lower than start')
         }
 
-        checkNegative(startInputValue, maxInputValue)
-
-    }, [maxInputValue])
-
-
-    function checkNegative(start: number, max: number) {
-
-        if (start < 0) {
-            setStartInputError(true)
-            setCounterError('start value must be positive')
-        }
-
-        if (max < 0) {
+        if (maxInputValue < 0) {
             setMaxInputError(true)
-            setCounterError('max value must be positive')
+            dispatch(setCounterErrorAC('max value must be positive'))
+        } else if (maxInputValue < startInputValue) {
+            setMaxInputError(true)
+            dispatch(setCounterErrorAC('max value lower than start'))
+        } else if (maxInputValue === startInputValue) {
+            setMaxInputError(true)
+            dispatch(setCounterErrorAC('values are equal'))
+        } else if (maxInputValue !== maxCounter || startInputValue !== startCounter) {
+            dispatch(setCounterErrorAC('press set'))
+            setMaxInputError(false)
+        } else {
+            dispatch(setCounterErrorAC(''))
+            setMaxInputError(false)
         }
-    }
+    }, [startInputValue, maxInputValue])
 
     const disableSetButton =
         (maxInputValue === maxCounter && startInputValue === startCounter) ||
         startInputError || maxInputError
-
 
     return (
         <>
@@ -153,7 +121,6 @@ export const Settings: FC<PropsType> = ({
                 <Button
                     onClick={clearHandler}
                     className={s.button}
-                // disabled={disableSetButton}
                 >Clear</Button>
 
             </div>
