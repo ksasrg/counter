@@ -8,9 +8,8 @@ import { StoreType } from '../../state/store';
 
 export const Settings = () => {
     const dispatch = useDispatch()
-    const display = useSelector<StoreType, CounterType>(state => state.display)
-    const maxCounter = display.maxCounter
-    const startCounter = display.startCounter
+    const maxCounter = useSelector<StoreType, number>(state => state.display.maxCounter)
+    const startCounter = useSelector<StoreType, number>(state => state.display.startCounter)
 
     const [maxInputValue, setMaxInputValue] = useState<number>(maxCounter)
     const [startInputValue, setStartInputValue] = useState<number>(startCounter)
@@ -45,39 +44,44 @@ export const Settings = () => {
     }
 
     useEffect(() => {
+        let setCounterError = ''
+
         if (startInputValue < 0) {
             setStartInputError(true)
-            dispatch(setCounterErrorAC('start value must be positive'))
+            setCounterError = 'start value must be positive'
         } else if (startInputValue > maxInputValue) {
             setStartInputError(true)
-            dispatch(setCounterErrorAC('start value more than max'))
+            setCounterError = 'start value more than max'
         } else if (startInputValue === maxInputValue) {
             setStartInputError(true)
-            dispatch(setCounterErrorAC('values are equal'))
+            setCounterError = 'values are equal'
         } else if (maxInputValue !== maxCounter || startInputValue !== startCounter) {
-            dispatch(setCounterErrorAC('press set'))
+            setCounterError = 'press set'
             setStartInputError(false)
         } else {
-            dispatch(setCounterErrorAC(''))
+            setCounterError = ''
             setStartInputError(false)
         }
 
         if (maxInputValue < 0) {
             setMaxInputError(true)
-            dispatch(setCounterErrorAC('max value must be positive'))
+            setCounterError = 'max value must be positive'
         } else if (maxInputValue < startInputValue) {
             setMaxInputError(true)
-            dispatch(setCounterErrorAC('max value lower than start'))
+            setCounterError = 'max value lower than start'
         } else if (maxInputValue === startInputValue) {
             setMaxInputError(true)
-            dispatch(setCounterErrorAC('values are equal'))
+            setCounterError = 'values are equal'
         } else if (maxInputValue !== maxCounter || startInputValue !== startCounter) {
-            dispatch(setCounterErrorAC('press set'))
+            setCounterError = 'press set'
             setMaxInputError(false)
         } else {
-            dispatch(setCounterErrorAC(''))
+            setCounterError = ''
             setMaxInputError(false)
         }
+
+        dispatch(setCounterErrorAC(setCounterError))
+
     }, [startInputValue, maxInputValue])
 
     const disableSetButton =
